@@ -30,7 +30,6 @@ class GameService {
     this.$interval = $interval;
     this.$mdToast = $mdToast;
 
-    $rootScope.score = 50; // starting score
 
     this.width = 0;
     this.height = 0;
@@ -45,6 +44,7 @@ class GameService {
   }
 
   reset(width, height) {
+    this.$rootScope.score = 50; // starting score
     this.clock = 0;
     this.width = width;
     this.height = height;
