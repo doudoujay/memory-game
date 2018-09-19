@@ -18,10 +18,14 @@ class FirebaseService {
   saveHighestScore(score) {
     var ref = firebase.database().ref().child('scores');
     ref = this.obj(ref);
-    ref[this.getUserEmailId()] = score;
-    ref.$save().then(()=>{
-      console.log('saved')
-    });
+    ref.$loaded().then((ref)=>{
+      console.log(ref);
+      ref[this.getUserEmailId()] = score;
+      ref.$save().then(()=>{
+        console.log('saved')
+      });
+
+    })
 
   }
   getHighestScore() {
