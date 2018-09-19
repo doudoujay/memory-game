@@ -2,6 +2,10 @@
 
 > Pokemon Themed Memory Game
 
+https://memorygame.doudoujay.com
+
+https://memory-game-us.firebaseapp.com
+
 ## Install
 
 ```
@@ -13,6 +17,15 @@ npm install
 ```
 npm run serve
 ```
+
+# Lazy Deploying
+
+```
+firebase init #get the right option for you
+./deploy.sh
+```
+
+Enjoy :)
 
 ## Rules
 

@@ -6,22 +6,21 @@
       <md-icon class="material-icons" ng-if="$root.user.email !== undefined"> face</md-icon>
       {{$root.user.email}}
     </div>
-
-
-    <md-select ng-model="$root.difficultyChosed" placeholder="Difficulty" style="color: white">
+    <md-select ng-model="$root.difficultyChosed" placeholder="Difficulty" style="color: white"
+               ng-if="$root.user.email !== undefined">
       <md-option ng-repeat="(key, val) in $root.difficulties" value="{{val}}">{{key}}</md-option>
     </md-select>
-    <md-button class="md-icon-button" ng-click="reset()">
+    <md-button class="md-icon-button" ng-click="reset()" ng-if="$root.user.email !== undefined">
       <md-tooltip md-direction="bottom">Reset</md-tooltip>
       <md-icon class="material-icons" style="color: greenyellow;">refresh</md-icon>
     </md-button>
 
-    <md-button class="md-icon-button" ng-click="ranking()">
+    <md-button class="md-icon-button" ng-click="ranking()" ng-if="$root.user.email !== undefined">
       <md-tooltip md-direction="bottom">Ranking</md-tooltip>
       <md-icon class="material-icons">list</md-icon>
     </md-button>
 
-    <md-button class="md-icon-button" ng-click="signout()">
+    <md-button class="md-icon-button" ng-click="signout()" ng-if="$root.user.email !== undefined">
       <md-tooltip md-direction="up">Signout</md-tooltip>
       <md-icon class="material-icons">lock</md-icon>
     </md-button>

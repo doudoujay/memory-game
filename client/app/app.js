@@ -22,7 +22,7 @@ var config = {
 firebase.initializeApp(config);
 firebase.auth().useDeviceLanguage();
 
-angular.module('app', [
+var app = angular.module('app', [
   ngMaterial,
   'firebase',
   uiRouter,
@@ -38,6 +38,27 @@ angular.module('app', [
 
   .component('app', AppComponent)
   .service("FirebaseService", FirebaseService)
-  .service("GameService", GameService)
-;
+  .service("GameService", GameService);
+
+app.run(($rootScope, FirebaseService, $state, $timeout, $mdDialog) => {
+  var auth = FirebaseService.auth();
+
+
+  // Listen to '$locationChangeSuccess', not '$stateChangeStart'
+  $rootScope.$on('$locationChangeSuccess', (event) => {
+    auth.$onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
+        console.log("Signed in as:", firebaseUser.uid);
+      } else {
+        event.preventDefault();
+        $timeout(() => {
+          $state.go('auth');
+        });
+
+      }
+
+    })
+  })
+});
+
 
