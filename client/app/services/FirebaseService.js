@@ -1,40 +1,55 @@
-import firebase from 'firebase';
 class FirebaseService {
   constructor(
-    $firebaseObject, $firebaseArray, $firebaseAuth, $firebaseStorage) {
-    // firebase init
-    var config = {
-      apiKey: "AIzaSyCGJhhdrdC0WKD2vC4iLXxgthZMwUpYlPM",
-      authDomain: "memory-game-us.firebaseapp.com",
-      databaseURL: "https://memory-game-us.firebaseio.com",
-      projectId: "memory-game-us",
-      storageBucket: "memory-game-us.appspot.com",
-      messagingSenderId: "370105281638"
-    };
-    firebase.initializeApp(config);
-    firebase.auth().useDeviceLanguage();
+    $firebaseObject, $firebaseArray, $firebaseAuth, $firebaseStorage, $rootScope) {
     this.array = $firebaseArray;
     this.auth = $firebaseAuth;
     this.obj = $firebaseObject;
     this.storage = $firebaseStorage;
+    this.$rootScope=  $rootScope;
+
+    var auth = this.auth();
+    auth.$onAuthStateChanged((firebaseUser) => {
+      $rootScope.user = firebaseUser;
+    });
   }
   getAuth() {
     return this.auth();
   }
-  getLabs() {
-    var ref = firebase.database().ref().child('labs');
-    return this.array(ref);
+  saveHighestScore(score) {
+    var ref = firebase.database().ref().child('scores');
+    ref = this.obj(ref);
+    ref[this.getUserEmailId()] = score;
+    ref.$save().then(()=>{
+      console.log('saved')
+    });
+
   }
-  getYoloStorage(fileName) {
-    var storageRef = firebase.storage().ref(fileName);
-    return this.storage(storageRef);
+  getHighestScore() {
+    var ref = firebase.database().ref('scores').child(this.getUserEmailId());
+    ref = this.obj(ref);
+    ref.$bindTo(this.$rootScope, "highScore").then(()=>{
+      console.log("Binded high score to "+ this.$rootScope.highScore.$value);
+    });
+
   }
-  phoneNumbers(lab) {
-    var ref = firebase.database().ref().child("phoneNumbers/"+lab.name);
-    return this.array(ref);
+  async getRanking() {
+    var ref = firebase.database().ref().child('scores');
+    ref = this.array(ref);
+    await ref.$loaded();
+    var result = [];
+    angular.forEach(ref, e => e.$id = this.getEmailIdToEmail(e.$id));
+
+    return ref;
+  }
+
+  getUserEmailId(){
+    return this.$rootScope.user.email.replace(/\./g, ',');
+  }
+  getEmailIdToEmail(emailID){
+    return emailID.replace(/,/g, '.');
   }
 }
 
 FirebaseService.$inject =
-  ['$firebaseObject', '$firebaseArray', '$firebaseAuth', '$firebaseStorage'];
+  ['$firebaseObject', '$firebaseArray', '$firebaseAuth', '$firebaseStorage','$rootScope'];
 export default FirebaseService;

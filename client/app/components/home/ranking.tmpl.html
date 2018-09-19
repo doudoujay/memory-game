@@ -1,0 +1,22 @@
+<md-dialog>
+  <md-dialog-content>
+    <md-subheader class="md-primary">High Score Ranks</md-subheader>
+  </md-dialog-content>
+  <md-list>
+    <div ng-repeat="rank in ranks">
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text" layout="column">
+          <h3 layout="row">
+            {{rank.$value}} <div ng-if="$last">🥇</div>
+
+          </h3>
+          <h4 layout="row">
+            {{rank.$id}}
+          </h4>
+        </div>
+
+      </md-list-item>
+      <md-divider ng-if="!$last"></md-divider>
+    </div>
+  </md-list>
+</md-dialog>

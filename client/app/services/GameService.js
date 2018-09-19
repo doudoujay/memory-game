@@ -1,51 +1,53 @@
-class Card {
-  constructor(id, defaultImg) {
-    this.hidden = true;
-    this.id = id;
-    this.invalid = false;
-    this.defaultImg = defaultImg;
-    this.img = `http://pngimg.com/uploads/pokemon/pokemon_PNG${id}.png`;
-    this.image = this.defaultImg;
-  }
-
-  compare(card) {
-    return card.id === this.id
-  }
-
-  changeState() {
-    if (this.hidden) {
-      this.hidden = !this.hidden;
-      this.image = this.img;
-    } else {
-      this.hidden = !this.hidden;
-      this.image = this.defaultImg;
-    }
-  }
-}
+import Card from './Card';
+import rankingController from '../components/home/ranking.controller';
+import rankingTmpl from '../components/home/ranking.tmpl.html';
 
 class GameService {
-  constructor($rootScope, $timeout, $interval, $mdToast) {
+  constructor($rootScope, $timeout, $interval, $mdToast, $mdDialog, FirebaseService) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$interval = $interval;
     this.$mdToast = $mdToast;
-
+    this.$mdDialog = $mdDialog;
 
     this.width = 0;
     this.height = 0;
     this.grid = [[]];
 
     this.timer = null;
-    this.clock = 0;
+    this.$rootScope.clock = 0;
     this.clockTimer = null;
     this.idPool = null;
     this.flippedCards = [];
 
+    $rootScope.$watch('user', () => {
+      if ($rootScope.user === undefined || $rootScope.user === null) return;
+      if ($rootScope.highScore !== undefined) return;
+      FirebaseService.getHighestScore();
+    })
+    $rootScope.$watch('score', () => {
+      if ($rootScope.user === undefined || $rootScope.user === null) return;
+      if ($rootScope.score > $rootScope.highScore.$value) {
+        FirebaseService.saveHighestScore($rootScope.score);
+      }
+
+    })
+
+
+
+
+  }
+
+  resetWithoutStartingGame() {
+    this.$rootScope.score = 50; // starting score
+    this.$rootScope.clock = 0;
+    this.$timeout.cancel(this.timer);
+    this.$interval.cancel(this.clockTimer);
   }
 
   reset(width, height) {
     this.$rootScope.score = 50; // starting score
-    this.clock = 0;
+    this.$rootScope.clock = 0;
     this.width = width;
     this.height = height;
     this.idPool = null;
@@ -56,15 +58,13 @@ class GameService {
       this.$interval.cancel(this.clockTimer);
     }
 
-    // this.clockTimer = this.$interval(()=>{
-    //   console.log(++this.clock);
-    // }, 1000);
-    //
-    // this.timer = this.$timeout(()=>{
-    //   alert("you die")
-    //   this.$timeout.cancel(this.timer);
-    //   this.$interval.cancel(this.clockTimer);
-    // }, 60000); // 60 s per game
+    this.clockTimer = this.$interval(() => {
+      ++this.$rootScope.clock;
+    }, 1000);
+
+    this.timer = this.$timeout(() => {
+      this.die();
+    }, 180000); // 180 s per game
 
 
     this.generateCards();
@@ -87,6 +87,9 @@ class GameService {
   flip(i, j) {
     console.log(i, j);
     var card = this.grid[i][j];
+    if (this.ifWin()) {
+      this.showWinDialog();
+    }
     if (card.hidden === false || this.flippedCards.length >= 2) return; // prevent flip card if already showed
     card.changeState();
 
@@ -112,7 +115,6 @@ class GameService {
         }, 500); // rest for 0.5 s
 
       }
-      // reset flipped cards
 
     }
     // setTimeout(() => {
@@ -131,7 +133,7 @@ class GameService {
       this.idPool = Array.from({length: this.width * this.height / 4}, () => Math.floor(Math.random() * 160 + 1));
       this.idPool = this.idPool.concat(this.idPool.concat(this.idPool.concat(this.idPool)));
       this.shuffle(this.idPool);
-      console.log(this.idPool);
+      // console.log(this.idPool);
     }
     return this.idPool[i * this.width + j];
   }
@@ -139,6 +141,15 @@ class GameService {
   getGrid() {
     console.log(this.grid);
     return this.grid;
+  }
+
+  ifWin() {
+    for (var i = 0; i < this.width; i++) {
+      for (var j = 0; j < this.height; j++) {
+        if (this.grid[i][j].invalid === false) return false;
+      }
+    }
+    return true;
   }
 
   shuffle(a) {
@@ -152,6 +163,14 @@ class GameService {
     return a;
   }
 
+  die() {
+    // reset timers
+    this.$timeout.cancel(this.timer);
+    this.$interval.cancel(this.clockTimer);
+    // show die dialog
+    this.showDieDialog();
+  }
+
   showToast(txt) {
     this.$mdToast.show(
       this.$mdToast.simple()
@@ -160,8 +179,53 @@ class GameService {
         .hideDelay(500)
     );
   }
+
+
+  showDieDialog() {
+    var confirm = this.$mdDialog.confirm()
+      .title('Game Over')
+      .textContent('Try again?')
+      .ok('OK')
+      .cancel('Cancel');
+
+    this.$mdDialog.show(confirm).then(() => {
+      this.reset(6, 6);
+    }, function () {
+    });
+  };
+
+  showWinDialog() {
+    var confirm = this.$mdDialog.confirm()
+      .title('Congrats!')
+      .textContent('Try again?')
+      .ok('OK')
+      .cancel('Cancel');
+
+    this.$mdDialog.show(confirm).then(() => {
+      this.reset(6, 6);
+    }, function () {
+    });
+  };
+
+  showRanking(){
+    this.$mdDialog
+      .show({
+        controller: rankingController,
+        template: rankingTmpl,
+        parent: angular.element(document.body),
+        clickOutsideToClose: true,
+        fullscreen: false  // Only for -xs, -sm breakpoints.
+      })
+      .then(
+        function(answer) {
+
+        },
+        function() {
+
+        });
+  }
 }
 
 
-GameService.$inject = ["$rootScope", "$timeout", "$interval", "$mdToast"];
+GameService.$inject = ["$rootScope", "$timeout", "$interval", "$mdToast", "$mdDialog", "FirebaseService"];
 export default GameService;

@@ -1,7 +1,6 @@
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
 import ngMaterial from 'angular-material';
-import firebase from 'firebase';
 import "angularfire";
 
 import Common from './common/common';
@@ -11,7 +10,7 @@ import FirebaseService from './services/FirebaseService';
 import GameService from './services/GameService';
 import 'normalize.css';
 
-// firebase init
+
 var config = {
   apiKey: "AIzaSyCGJhhdrdC0WKD2vC4iLXxgthZMwUpYlPM",
   authDomain: "memory-game-us.firebaseapp.com",
@@ -25,6 +24,7 @@ firebase.auth().useDeviceLanguage();
 
 angular.module('app', [
   ngMaterial,
+  'firebase',
   uiRouter,
   Common,
   Components
@@ -38,4 +38,6 @@ angular.module('app', [
 
   .component('app', AppComponent)
   .service("FirebaseService", FirebaseService)
-  .service("GameService", GameService);
+  .service("GameService", GameService)
+;
+

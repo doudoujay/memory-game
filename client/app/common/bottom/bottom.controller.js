@@ -1,7 +1,8 @@
 class BottomController {
-  constructor($rootScope) {
+  constructor($rootScope, $scope, FirebaseService, GameService) {
     this.name = 'bottom';
+
   }
 }
-BottomController.$inject = ['$rootScope'];
+BottomController.$inject = ['$rootScope', '$scope','FirebaseService','GameService'];
 export default BottomController;

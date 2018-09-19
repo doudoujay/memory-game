@@ -2,49 +2,9 @@
   <div ng-repeat="row in $root.grid" layout="row" flex="10">
     <md-card ng-repeat="card in row track by $index" ng-click="flip($parent.$index, $index) "
              ng-class="{'invalid-card' : card.invalid}">
-      <!--<md-card-header>-->
-      <!--<md-card-header-text>-->
-      <!--<span class="md-title">{{lab.model}}</span>-->
-      <!--<span class="md-subhead">-->
-      <!--<i class="fas fa-desktop"></i> {{lab.count}} PC-->
-      <!--<i class="fas fa-microchip"></i>{{lab.ram}}GB-->
-      <!--<i class="fas fa-tv"></i> {{lab.monitor}}″-->
-      <!--<i ng-if="hasGPU(lab)">-->
-      <!--<i class="fas fa-gamepad"></i>-->
-      <!--<span>{{gpuInfo(lab)}}</span>-->
-      <!--</i>-->
 
-      <!--</span>-->
-
-      <!--</md-card-header-text>-->
-
-      <!--</md-card-header>-->
       <img class="md-card-image" ng-src="{{card.image}}"  ng-style="cardStyle">
 
-      <!--<md-card-title>-->
-      <!--<md-card-title-text>-->
-      <!--</md-card-title-text>-->
-      <!--</md-card-title>-->
-
-      <!--<md-card-content layout="column">-->
-      <!--<div layout="row">-->
-      <!--</div>-->
-
-
-      <!--</md-card-content>-->
-
-      <!--<md-card-actions layout="row" layout-align="end center">-->
-
-      <!--<md-button ng-click="$ctrl.share(lab)" class="md-icon-button" aria-label="Share">-->
-      <!--<i class="fas fa-share"></i>-->
-      <!--</md-button>-->
-      <!--<md-button class="md-icon-button" ng-click="$ctrl.detailLab(lab)" aria-label="More info">-->
-      <!--<i class="fas fa-info"></i>-->
-      <!--</md-button>-->
-      <!--<md-button class="md-icon-button" aria-label="Notify" ng-click="$ctrl.notify(lab)">-->
-      <!--<i class="far fa-bell" ></i>-->
-      <!--</md-button>-->
-      <!--</md-card-actions>-->
     </md-card>
   </div>
 

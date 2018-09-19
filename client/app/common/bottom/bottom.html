@@ -1,8 +1,10 @@
 <footer>
-  <md-toolbar class="md-scroll-shrink layout-padding">
+  <md-toolbar class="md-scroll-shrink layout-padding" ng-if="!($root.user === undefined || $root.user === null)">
     <div layout="row" layout-align="center center" flex>
-      <div flex="50">Highest Score: {{$root.score}}</div>
-      <div flex="50">Score: {{$root.score}}</div>
+      <div flex="33">Highest Score: {{$root.highScore.$value}}</div>
+      <div flex="33">Score: {{$root.score}}</div>
+      <div flex="33"><md-icon class="material-icons">alarm</md-icon> {{$root.clock}} / 180s</div>
+
     </div>
 
   </md-toolbar>

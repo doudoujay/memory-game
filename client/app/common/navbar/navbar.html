@@ -1,45 +1,30 @@
 <md-toolbar class="md-hue-2 fixed-header">
   <div class="md-toolbar-tools">
-    <md-button class="md-icon-button" aria-label="menu" ng-click="$ctrl.toggle()" ng-show="showSignout">
-      <md-icon class="material-icons">menu</md-icon>
-    </md-button>
 
-    <h2 flex md-truncate >Memory Game</h2>
+    <h2 flex md-truncate>Memory Game</h2>
+    <div flex>
+      <md-icon class="material-icons" ng-if="$root.user.email !== undefined"> face</md-icon>
+      {{$root.user.email}}
+    </div>
 
-    <md-button class="md-icon-button" aria-label="Favorite" ng-click="reset()">
+
+    <md-select ng-model="$root.difficultyChosed" placeholder="Difficulty" style="color: white">
+      <md-option ng-repeat="(key, val) in $root.difficulties" value="{{val}}">{{key}}</md-option>
+    </md-select>
+    <md-button class="md-icon-button" ng-click="reset()">
       <md-tooltip md-direction="bottom">Reset</md-tooltip>
       <md-icon class="material-icons" style="color: greenyellow;">refresh</md-icon>
     </md-button>
 
-    <md-button class="md-icon-button" aria-label="More">
+    <md-button class="md-icon-button" ng-click="ranking()">
       <md-tooltip md-direction="bottom">Ranking</md-tooltip>
-      <md-icon class="material-icons" >list</md-icon>
+      <md-icon class="material-icons">list</md-icon>
+    </md-button>
+
+    <md-button class="md-icon-button" ng-click="signout()">
+      <md-tooltip md-direction="up">Signout</md-tooltip>
+      <md-icon class="material-icons">lock</md-icon>
     </md-button>
   </div>
 </md-toolbar>
 
-<md-sidenav class="md-sidenav-left" md-component-id="left"
-            md-whiteframe="4">
-
-  <md-toolbar class="md-toolbar-tools">
-    <md-button class="md-icon-button" aria-label="More">
-      <md-icon class="fas fa-cog"></md-icon>
-    </md-button>
-    <span flex></span>
-    <md-button class="md-icon-button" aria-label="signout" ng-click="$ctrl.signout()">
-      <md-icon class="fas fa-sign-out-alt"></md-icon>
-    </md-button>
-  </md-toolbar>
-
-  <md-content layout-margin layout="column">
-    <md-button class="md-icon-button" aria-label="camera">
-      <md-icon class="fas fa-camera"></md-icon>
-    </md-button>
-    <md-button class="md-icon-button" aria-label="calendar">
-      <md-icon class="fas fa-calendar-alt"></md-icon>
-    </md-button>
-
-
-  </md-content>
-
-</md-sidenav>
